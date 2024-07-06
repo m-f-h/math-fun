@@ -1,0 +1,20 @@
+/*
+* https://www.linkedin.com/feed/update/urn:li:activity:7206391929427668992?
+*
+*  if a^2+b^2+c^2 = d^2+e^2+f^2 and (a,b,c,d,e,f) pairwise co-prime and a.b.c.d.e.f > 0. Find a solution.
+*
+Write the equation as a²-d² + b²-e² = f² - c² = (f+c)(f-c) = (a+d)(a-d) + (b+e)(b-e). 
+Choose primes a>b>d>e and I think you can choose b-e=1, and maybe also a-d=1, then you have to find a solution to 2d+1 + 2e+1 = (f+c)(f-c).
+I don't think that's difficult. Maybe we can even take f-c=2 (obviously =1 can't work). That gives 2d+2e+2 = (2c+2)*2 <=> d+e = 2c+1.
+*/
+        /* choose 4 distinct primes 2 < a < d < e < b */
+s(L)={ forprime(a=3,L=99, forprime(d=a+1,L, forprime(e=d+1,L, forprime(b=e+1,L,
+  my(D=divisors(a^2+b^2-d^2-e^2) /* this must =(f+c)(f-c) */, N=#D+1, P=a*b*d*e /* for coprime test*/); 
+  for(i=1,N\2, ([c,f] = [D[i]+D[N-i], D[N-i]-D[i]])%2 && next; /* both must be even*/
+               gcd(c\2,P)>1&&next; gcd(f\2,P)>1&&next; /* both coprime to abde */
+               return([a,b,c\2,d,e,f\2])
+  )))))}
+
+ s(99)   \\ = [5, 19, 43, 7, 13, 41]
+ 5^2+ 19^2+ 43^2- 7^2 -13^2- 41^2  \\%333 = 336
+ 5^2+ 19^2 - 43^2- 7^2 -13^2 + 41^2    \\ = 0
