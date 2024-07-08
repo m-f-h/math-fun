@@ -1,4 +1,8 @@
-""" ref: https://www.linkedin.com/feed/update/urn:li:activity:7216087495745163264?utm_source=share&utm_medium=member_desktop
+"""
+ref: https://www.linkedin.com/feed/update/urn:li:activity:7216087495745163264?utm_source=share&utm_medium=member_desktop
+Two ppl (1) and (2) walk along the path below, 
+(1) at 6 km/h, starting at A
+(2) at 5 km/h, starting at B
 
 C
 | \
@@ -54,7 +58,7 @@ class Curve(list):
             if arc.len < t*self.speed:
                 t -= arc.len / self.speed
             else: return arc.pos(t * self.speed)
-        return self[-1][end]
+        return self[-1]['end']
 
 def dist(t, curve1, curve2): return (curve1.pos(t)-curve2.pos(t)).len
 
