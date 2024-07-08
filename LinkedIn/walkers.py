@@ -23,7 +23,10 @@ class Point:
   """
   def __str__(self): return str(self.coords)
   def __repr__(self): return type(self).__name__ + str(self.coords)
-  def __round__(self, n=1): return type(self)(round(x,n)for x in self)
+  def __round__(self, n=None):
+    if n is None:
+      n = globals().get('precision', 1)  
+    return type(self)(round(x,n)for x in self)
   def __iter__(self): return iter(self.coords)
   def __add__(self,other): return type(self)(x+y for x,y in zip(self, other))
   def __sub__(self,other): return type(self)(x-y for x,y in zip(self, other))
@@ -67,7 +70,7 @@ def Time(t):
   secs = mins % 1 * 60
   return "%02d:%02d:%02d" % (int(t),int(mins),int(secs))
 
-def schedule(start, end, num_pts):
+def schedule(start, end, num_pts = 10):
   time_step = (end - start) / num_steps
   for i in range(num_steps+1):
       print(f"at {Time( t := start + i * time_step )}, (1) = {round(C1(t))}, (2) = {round(C2(t))}, distance = {dist(t, C1, C2) :.3}")
@@ -82,5 +85,8 @@ if 1:
   total_time = total_length / 6       # ~ 6 h
   num_steps = 10
   schedule(0,total_time,num_steps)
-  
+# then, choose your time interval and explore, e.g.,
+# schedule(3, 4, 10)
+# set global var. 'precision' = 9  to get more prercise positions
+
 # eof
