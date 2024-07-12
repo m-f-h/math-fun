@@ -1,0 +1,79 @@
+/* sequences of primes { p, q, r, s }
+   such that (p+1), (q+1) , ...  is a geometric sequence
+
+   ref: https://www.linkedin.com/feed/update/urn:li:activity:7216750355752050688?utm_source=share&utm_medium=member_desktop
+ */
+
+find(upto=1e3, D = 1, K=3, LIM=upto\2) = { my(L=List()); forprime(p=1, LIM,
+  my( A = p+D,
+      denom = factorback([ f[1]^(f[2]\2) | f <- factor( A )~ ]) );
+  for(numer = A / denom + 1, sqrtnint((upto+D) * denom^K \ A, K), 
+    A * numer^3 % denom^3 && next; my(r=numer/denom);
+    for(k=1,K, \\ type(denom * r^k)=="t_INT" && 
+        (isprime(A * r^k - D)) || next(2));
+    listput(L, [ A * r^k - D | k<-[0..K]]); print1(L[#L]", "))); L}
+
+find(,5) /* gives:
+[2, 23, 107, 443]
+[3, 19, 67, 211]
+[13, 31, 67, 139]
+[19, 67, 211, 643]
+[31, 67, 139, 283]
+[37, 79, 163, 331]
+[43, 67, 103, 157]
+[67, 139, 283, 571]
+[73, 151, 307, 619]
+[157, 211, 283, 379]
+[251, 379, 571, 859] */
+
+
+  s=[]
+  [ s[i]/s[i-1] | i <- [2..#s]]
+
+(Python)
+from sympy import isprime, sieve, integer_nthroot
+
+def A373464_upto(N=1e3, D=1, K=3):
+  L=[] ; LIM = int(N/2)
+  for p in sieve:
+    if p > LIM: L.sort(); return L
+    denom = p+D
+    for numer in range(denom+1, integer_nthroot((N+D)*denom**(K-1), K)[0]+1):
+      Q,R = divrem(numer**K, denom**(K-1))
+      if R or not all(isprime(x - D) for x in (numer, numer**2//denom, Q)):
+          continue
+      for k in range(K): 
+        if not isprime(numer**(k+1) // denom**k - D): break
+      else:
+        L += [numer**K // denom**(K-1) - D]
+
+          if numer**K % denom**(K-1): continue
+      for k in range(K): 
+        if not isprime(numer**(k+1) // denom**k - D): break
+      else:
+        L += [numer**K // denom**(K-1) - D]
+    
+
+
+A373464_upto=(N=1e3, D=1, K=3, LIM=499) = { my(L=List()); forprime(p=1, LIM, my( denom = p+D );
+  for(numer=denom+1, sqrtnint((upto+D) * denom^(K-1), K), my(r=numer/denom);
+    for(k=1,K, (type(denom * r^k)=="t_INT" && isprime(denom * r^k - D)) || next(2));
+    listput(L, denom * r^K - D))); L}
+
+
+is_A373464(n, D=1, K=4) = forprime(p = 2, sqrtnint(n+D, K-1
+
+
+Might be a subsequence of:
+A089199		Primes p such that p+1 is divisible by a cube.
+7, 23, 31, 47, 53, 71, 79, 103, 107, 127, 151, 167, 191, 199, 223, 239, 263, 269, 271, 311, 359, 367, 383, 431, 439, 463, 479, 487, 499, 503, 593, 599, 607, 631, 647, 701, 719, 727, 743, 751, 809, 823, 839, 863, 887, 911, 919, 967, 971, 983, 991 (list; graph; refs; listen; history; edit; text; internal format)
+A293194		Primes of the form 2^q * 3^r * 5^s - 1.	
+2, 3, 5, 7, 11, 17, 19, 23, 29, 31, 47, 53, 59, 71, 79, 89, 107, 127, 149, 179, 191, 199, 239, 269, 359, 383, 431, 449, 479, 499, 599, 647, 719, 809, 863, 971, 1151, 1249, 1279, 1439, 1499, 1619, 1999, 2399, 2591, 2699, 2879, 2999, 4049, 4373, 4799, 4999, 5119, 5399, 6143, 6911 (list; graph; refs; listen; history; edit; text; internal format)
+A184856		Primes of the form floor(k*e/(e-1)).	
+3, 7, 11, 17, 23, 31, 37, 41, 47, 53, 61, 71, 79, 83, 101, 107, 109, 113, 131, 137, 139, 151, 167, 181, 191, 193, 197, 199, 211, 223, 227, 229, 251, 257, 281, 283, 311, 313, 317, 349, 359, 367, 373, 379, 389, 397, 401, 409, 419, 431, 433, 439, 449, 457, 461, 463, 479, 487, 491, 499, 503, 509, 523, 541, 547, 563, 569, 571, 577, 593, 599, 601, 607, 613, 631, 643, 647, 653, 659, 661, 673, 677, 683, 691, 719, 727, 743, 751, 757, 773, 787, 797, 809, 811, 821, 827, 857, 859, 863, 877, 881, 887, 911, 919, 941, 947 (list; graph; refs; listen; history; edit; text; internal format)
+A299171		Primes p such that Ramanujan number tau(p) is divisible by p+1.		
+2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 47, 53, 59, 71, 79, 83, 89, 97, 107, 127, 137, 139, 149, 167, 179, 191, 199, 223, 229, 239, 251, 269, 293, 349, 359, 367, 383, 419, 431, 449, 479, 499, 503, 587, 593, 599, 643, 647, 719, 809, 827, 839, 863, 881, 919 (list; graph; refs; listen; history; edit; text; internal format)
+A347977		Primes of the form 2^p * 3^q * 5^r * 7^s - 1.		
+2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 47, 53, 59, 71, 79, 83, 89, 97, 107, 127, 139, 149, 167, 179, 191, 199, 223, 239, 251, 269, 293, 349, 359, 383, 419, 431, 449, 479, 499, 503, 587, 599, 647, 719, 809, 839, 863, 881, 971, 1049, 1151, 1249, 1259, 1279, 1399, 1439, 1499, 1511, 1567, 1619, 1889 (list; graph; refs; listen; history; edit; text; internal format)
+A374482		Indices of records in A347381, where A347381 is the distance from n to the nearest common ancestor of n and sigma(n) in the Doudna-tree (A005940).
+1, 3, 7, 17, 23, 29, 31, 47, 53, 71, 83, 89, 97, 107, 127, 139, 149, 167, 179, 191, 199, 233, 239, 241, 269, 293, 337, 349, 359, 373, 383, 419, 431, 449, 461, 479, 499, 569, 571, 577, 587, 599, 643, 647, 701, 719, 769, 809, 839, 857, 863, 881, 967, 971, 1013, 1039, 1049, 1091, 1151, 1187, 1217, 1223, 1231, 1249, 1279 (list; graph; refs; listen; history; edit; text; internal format)
